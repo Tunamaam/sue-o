@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Allima Punchaw Amawta - Generador Inteligente</title>
+
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Framer Motion -->
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+
+    <!-- Lucide Icons (Script version for globals) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- MINEDU DATA (Strict Structure) -->
+    <script src="minedu_data.js"></script>
+
+    <style>
+        /* --- PREMIUM AMAZONIAN-ACADEMIC THEME --- */
+
+        :root {
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-surface: rgba(255, 255, 255, 0.65);
+            --glass-highlight: rgba(255, 255, 255, 0.8);
+            --primary-gradient: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            --accent-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+
+        body {
+            font-family: 'Outfit', 'Segoe UI', sans-serif;
+            /* Modern, clean font */
+            overflow-x: hidden;
+            background-color: #f8fafc;
+            /* Fallback */
+        }
+
+        /* PREMIUM GLASS CARD - Panel Inteligente */
+        .glass-card {
+            background: var(--glass-surface);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                0 4px 6px -1px rgba(0, 0, 0, 0.05),
+                0 10px 15px -3px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            /* Inner light ring */
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* GLASS INPUTS - Softer, cleaner */
+        .glass-input {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            backdrop-filter: blur(12px);
+            color: #1e293b;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .glass-input:focus {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #818cf8;
+            box-shadow:
+                0 0 0 4px rgba(99, 102, 241, 0.1),
+                inset 0 1px 2px rgba(0, 0, 0, 0.02);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        /* Custom Select Arrow */
+        select.glass-input {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%234f46e5' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.75rem center;
+            background-repeat: no-repeat;
+            background-size: 1.25em 1.25em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Magic Button Shine Effect */
+        @keyframes shimmer {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
+        .magic-button-bg {
+            background: linear-gradient(90deg,
+                    #4f46e5 20%,
+                    #818cf8 35%,
+                    #6366f1 50%,
+                    #818cf8 65%,
+                    #4f46e5 80%);
+            background-size: 200% auto;
+            animation: shimmer 3s linear infinite;
+        }
+
+        /* Subtle floating animation for background elements */
+        @keyframes float {
+            0% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(2deg);
+            }
+
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+        }
+    </style>
+</head>
+
+<body
+    class="min-h-screen bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-slate-50 via-indigo-50/50 to-blue-50">
+
+    <!-- Decorative Ambient Background -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div
+            class="absolute -top-[20%] -right-[10%] w-[70vw] h-[70vw] rounded-full bg-indigo-200/20 blur-[100px] animate-pulse">
+        </div>
+        <div class="absolute top-[40%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-blue-200/20 blur-[80px]"></div>
+    </div>
+
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef, useMemo } = React;
+        const { motion, AnimatePresence } = window.Motion;
+        const MINEDU_DATA = window.MINEDU_DATA || {};
+
+        // --- COMPONENTS ---
+
+        // Helper to convert kebab-case to PascalCase
+        const toPascalCase = (str) =>
+            str.replace(/(^\w|-\w)/g, (clear) => clear.replace(/-/, "").toUpperCase());
+
+        // Safe Icon component
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const pascalName = toPascalCase(name);
+            const iconData = window.lucide && window.lucide.icons && (window.lucide.icons[pascalName] || window.lucide.icons[name]);
+
+            if (!iconData) return <span style={{ width: size, height: size, display: 'inline-block' }}></span>;
+
+            if (Array.isArray(iconData)) {
+                return (
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width={size}
+                        height={size}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={className}
+                    >
+                        {iconData.map((element, index) => {
+                            const [tag, attrs] = element;
+                            return React.createElement(tag, { ...attrs, key: index });
+                        })}
+                    </svg>
+                );
+            }
+            return null;
+        };
+
+        const FormField = ({ label, icon, children, infoAction, delay = 0 }) => (
+            <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay }}
+                className="flex flex-col space-y-2 relative group"
+            >
+                <label className="flex items-center text-gray-700 font-semibold text-sm tracking-wide">
+                    <span className="mr-2 text-indigo-600 bg-indigo-50 p-1.5 rounded-lg border border-indigo-100"><Icon name={icon} size={16} /></span>
+                    {label}
+                    {infoAction && (
+                        <button
+                            onClick={(e) => { e.preventDefault(); infoAction(); }}
+                            className="ml-2 text-gray-400 hover:text-indigo-500 transition-colors"
+                            title="Ver información"
+                        >
+                            <Icon name="info" size={14} />
+                        </button>
+                    )}
+                </label>
+                {children}
+            </motion.div>
+        );
+
+        // Enhanced Select Component
+        const GlassSelect = ({ name, value, onChange, options, placeholder, disabled, required = false }) => (
+            <div className="relative">
+                <select
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    disabled={disabled}
+                    required={required}
+                    className={`glass-input w-full px-4 py-3 rounded-xl cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed text-gray-700 font-medium ${!value ? 'text-gray-400' : ''}`}
+                >
+                    <option value="" disabled>{placeholder}</option>
+                    {options.map((opt, idx) => (
+                        <option key={idx} value={opt}>{opt}</option>
+                    ))}
+                </select>
+            </div>
+        );
+
+        const SuggestionBox = ({ suggestions, onSelect, isLoading, isVisible, onClose }) => {
+            if (!isVisible) return null;
+
+            // Check if we are in a special waiting/error state served via the suggestions array
+            const statusMsg = suggestions.length === 1 && typeof suggestions[0] === 'string' && suggestions[0].startsWith('STATUS:WAITING')
+                ? suggestions[0]
+                : null;
+            const errorMsg = suggestions.length === 1 && typeof suggestions[0] === 'string' && suggestions[0].startsWith('ERROR:')
+                ? suggestions[0].replace('ERROR:', '')
+                : null;
+
+            return (
+                <motion.div
+                    initial={{ opacity: 0, y: -5, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -5, scale: 0.98 }}
+                    className="absolute z-50 w-full mt-2 bg-white/95 backdrop-blur-xl border border-indigo-100 rounded-xl shadow-2xl overflow-hidden max-h-80 overflow-y-auto ring-1 ring-black/5"
+                >
+                    {/* LOADING STATE - INITIAL */}
+                    {isLoading && !statusMsg && (
+                        <div className="p-6 flex flex-col items-center justify-center text-indigo-500 space-y-3">
+                            <Icon name="loader-2" className="animate-spin" size={24} />
+                            <span className="text-xs font-bold uppercase tracking-wider animate-pulse">Buscando sugerencias...</span>
+                        </div>
+                    )}
+
+                    {/* WAITING STATE - BACKOFF */}
+                    {statusMsg && (
+                        <div className="p-6 flex flex-col items-center justify-center text-amber-500 space-y-3 bg-amber-50/50">
+                            <Icon name="clock" className="animate-bounce" size={24} />
+                            <span className="text-xs font-bold uppercase tracking-wider text-center">
+                                La IA está ocupada.<br />Reintentando automáticamente...
+                            </span>
+                        </div>
+                    )}
+
+                    {/* ERROR STATE */}
+                    {errorMsg && (
+                        <div className="p-6 flex flex-col items-center justify-center text-red-500 space-y-3 bg-red-50/50">
+                            <Icon name="alert-circle" size={24} />
+                            <span className="text-xs font-bold uppercase tracking-wider text-center">{errorMsg}</span>
+                            <button onClick={onClose} className="text-xs underline hover:text-red-700">Cerrar</button>
+                        </div>
+                    )}
+
+                    {/* RESULTS LIST */}
+                    {!isLoading && !statusMsg && !errorMsg && suggestions.length > 0 && (
+                        <div className="flex flex-col">
+                            <div className="flex justify-between items-center px-4 py-2 bg-indigo-50/50 border-b border-indigo-100">
+                                <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Sugerencias IA</span>
+                                <button onClick={onClose} className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors">
+                                    <Icon name="x" size={14} />
+                                </button>
+                            </div>
+                            {suggestions.map((sug, idx) => (
+                                <button
+                                    key={idx}
+                                    onClick={() => onSelect(sug)}
+                                    className="text-left px-4 py-3 hover:bg-indigo-50 text-sm border-b border-gray-50 last:border-0 transition-colors text-gray-700 hover:text-indigo-800 flex items-start group"
+                                >
+                                    <span className="mt-0.5 mr-2 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500">
+                                        <Icon name="check-circle" size={14} />
+                                    </span>
+                                    <span className="flex-1">{sug}</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* EMPTY STATE */}
+                    {!isLoading && !statusMsg && !errorMsg && suggestions.length === 0 && (
+                        <div className="p-4 text-center text-gray-500 text-sm">
+                            <p>No se encontraron resultados.</p>
+                        </div>
+                    )}
+                </motion.div>
+            );
+        };
+
+        const InfoModal = ({ title, content, isOpen, onClose }) => {
+            if (!isOpen) return null;
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/20 backdrop-blur-sm" onClick={onClose}>
+                    <motion.div
+                        initial={{ scale: 0.95, opacity: 0, y: 10 }}
+                        animate={{ scale: 1, opacity: 1, y: 0 }}
+                        exit={{ scale: 0.95, opacity: 0, y: 10 }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl max-w-md w-full p-6 border border-white/40 ring-1 ring-black/5"
+                    >
+                        <h3 className="text-lg font-bold text-gray-800 flex items-center mb-4">
+                            <span className="p-2 bg-indigo-100 rounded-lg mr-3 text-indigo-600"><Icon name="info" size={20} /></span>
+                            {title}
+                        </h3>
+                        <div className="text-gray-600 text-sm leading-relaxed space-y-2">
+                            {content}
+                        </div>
+                        <button
+                            onClick={onClose}
+                            className="mt-6 w-full py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold shadow-lg shadow-indigo-200 transition-all hover:shadow-indigo-300 active:scale-[0.98]"
+                        >
+                            Entendido
+                        </button>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        const ResultModal = ({ isOpen, session, onDownload, onReset }) => {
+            if (!isOpen || !session) return null;
+            return (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md" role="dialog">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl max-w-lg w-full p-8 border border-white/50 ring-1 ring-black/5 flex flex-col items-center text-center relative overflow-hidden"
+                    >
+                        {/* Decorative Background */}
+                        <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-indigo-50/80 to-transparent -z-10"></div>
+                        <div className="absolute -top-10 -right-10 w-40 h-40 bg-purple-100 rounded-full blur-3xl opacity-50"></div>
+                        <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-100 rounded-full blur-3xl opacity-50"></div>
+
+                        {/* Icon */}
+                        <div className="mb-6 p-4 bg-white rounded-full shadow-lg shadow-indigo-100 text-indigo-600 relative z-10">
+                            <Icon name="check-circle-2" size={48} />
+                        </div>
+
+                        <h2 className="text-2xl font-black text-gray-800 mb-2 leading-tight">
+                            ¡Sesión Generada!
+                        </h2>
+
+                        <h3 className="text-lg font-semibold text-indigo-600 mb-4 px-4 line-clamp-2">
+                            {session.titulo_sesion}
+                        </h3>
+
+                        <div className="bg-indigo-50/50 rounded-xl p-4 mb-8 w-full border border-indigo-100/50">
+                            <p className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">Propósito</p>
+                            <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+                                {session.proposito || "Sesión lista para su descarga."}
+                            </p>
+                        </div>
+
+                        <div className="flex flex-col gap-3 w-full">
+                            <button
+                                onClick={onDownload}
+                                className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200 hover:shadow-emerald-300 transition-all transform hover:scale-[1.02] flex items-center justify-center group"
+                            >
+                                <Icon name="download" className="mr-2 group-hover:animate-bounce" size={20} />
+                                Descargar Word
+                            </button>
+
+                            <button
+                                onClick={onReset}
+                                className="w-full py-3 rounded-xl font-semibold text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors flex items-center justify-center"
+                            >
+                                <Icon name="refresh-ccw" className="mr-2" size={16} />
+                                Generar otra sesión
+                            </button>
+                        </div>
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- SCHOOL SETUP MODAL ---
+        const SchoolSetupModal = ({ onComplete }) => {
+            const [schoolData, setSchoolData] = useState({
+                dre: "",
+                ugel: "",
+                ie: "0018",
+                distrito: "Tarapoto"
+            });
+
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+                setSchoolData(prev => ({ ...prev, [name]: value }));
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                // Basic validation
+                if (!schoolData.dre || !schoolData.ugel || !schoolData.ie || !schoolData.distrito) {
+                    alert("Por favor completa todos los datos de la escuela.");
+                    return;
+                }
+                onComplete(schoolData);
+            };
+
+            return (
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-md">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 border border-white/50 relative overflow-hidden"
+                    >
+                        {/* Decorative Header */}
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-2">
+                                <span className="bg-indigo-100 p-2 rounded-xl text-indigo-600">
+                                    <Icon name="graduation-cap" size={24} />
+                                </span>
+                                <h2 className="text-xl font-bold text-gray-800">¿Trabajas en una escuela?</h2>
+                            </div>
+                        </div>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">DRE</label>
+                                <input
+                                    type="text"
+                                    name="dre"
+                                    value={schoolData.dre}
+                                    onChange={handleChange}
+                                    placeholder="Ej. San Martín"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">UGEL</label>
+                                <input
+                                    type="text"
+                                    name="ugel"
+                                    value={schoolData.ugel}
+                                    onChange={handleChange}
+                                    placeholder="Ej. San Martín"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">¿En qué escuela das clases?</label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        name="ie"
+                                        value={schoolData.ie}
+                                        onChange={handleChange}
+                                        placeholder="Busca tu escuela..."
+                                        className="w-full px-4 py-3 rounded-xl border border-indigo-200 bg-indigo-50/30 text-indigo-900 font-medium focus:border-indigo-500 outline-none transition-all"
+                                    />
+                                    <div className="absolute right-3 top-3 text-indigo-400">
+                                        <Icon name="chevron-down" size={20} />
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 ml-1">Selecciona tu Institución Educativa</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Distrito</label>
+                                <input
+                                    type="text"
+                                    name="distrito"
+                                    value={schoolData.distrito}
+                                    onChange={handleChange}
+                                    placeholder="Ej. Tarapoto"
+                                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                className="w-full mt-6 py-3.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2"
+                            >
+                                <span>Siguiente</span>
+                                <Icon name="arrow-right" size={18} />
+                            </button>
+                        </form>
+
+                    </motion.div>
+                </div>
+            );
+        };
+
+        // --- MAIN APPLICATION ---
+
+        const SessionGenerator = () => {
+            // STATE
+            const [schoolSetup, setSchoolSetup] = useState({
+                data: { dre: "", ugel: "", ie: "", distrito: "" }
+            });
+
+            useEffect(() => {
+                const storedData = localStorage.getItem('schoolData');
+                if (storedData) {
+                    try {
+                        setSchoolSetup({ data: JSON.parse(storedData) });
+                    } catch (e) {
+                        console.error("Error loading school data", e);
+                    }
+                }
+            }, []);
+
+            // Effect to check if school data is already saved (optional persistence)
+            // useEffect(() => { ... }, []);
+
+            const [formData, setFormData] = useState({
+                tema: "EL APARATO DIGESTIVO",
+                nivel: "",
+                grado: "",
+                area: "",
+                competencia: "",
+                capacidad: "",
+                desempeno: "",
+                comp_transversal: "",
+                cap_transversal: "",
+                enfoque: "",
+                valor: "",
+                tiempo: "90",
+                especialidad: "",
+                tipo_sesion: "Detallada"
+            });
+
+            // NEW STATE FOR EPT OPTIONS
+            const [eptData, setEptData] = useState(null); // Will store { competencias: [...] }
+
+            const [customAreaEnabled, setCustomAreaEnabled] = useState(false);
+            const [customAreaValue, setCustomAreaValue] = useState("");
+
+            const [suggestions, setSuggestions] = useState({}); // For pure AI fields (like Desempeño or generic text) & fallbacks
+            const [loadingState, setLoadingState] = useState({ generating: false });
+            const [activeSuggestion, setActiveSuggestion] = useState(null); // Which field is showing AI suggestions
+            const [infoModal, setInfoModal] = useState({ isOpen: false, title: "", content: "" });
+            const [showResultModal, setShowResultModal] = useState(false);
+            const [generatedSession, setGeneratedSession] = useState(null);
+            const [error, setError] = useState(null);
+
+            // VALIDATION STATE
+            const [isFormComplete, setIsFormComplete] = useState(false);
+            const [desempenoIASeleccionado, setDesempenoIASeleccionado] = useState(false); // NEW STRICT STATE
+
+            const handleSchoolSetupComplete = (data) => {
+                setSchoolSetup({
+                    isComplete: true,
+                    data: data
+                });
+            };
+
+            // Validation Logic
+            useEffect(() => {
+                const checkValidation = () => {
+                    if (!formData.tema) return false;
+                    if (!formData.tiempo) return false;
+                    if (!formData.nivel) return false;
+
+                    if (customAreaEnabled) {
+                        if (!customAreaValue || customAreaValue.length < 3) return false;
+                    } else {
+                        if (!formData.area) return false;
+                    }
+
+                    // Strict validation for other fields if Nivel/Area selected
+                    if (!formData.competencia) return false;
+                    if (!formData.capacidad) return false;
+
+                    // DESEMPEÑO STRICT VALIDATION
+                    if (!formData.desempeno) return false;
+                    if (!desempenoIASeleccionado) return false; // MUST BE SELECTED FROM AI
+
+                    if (!formData.comp_transversal) return false;
+                    if (!formData.cap_transversal) return false;
+                    if (!formData.enfoque) return false;
+                    if (!formData.valor) return false;
+
+                    return true;
+                };
+                setIsFormComplete(checkValidation());
+            }, [formData, customAreaEnabled, customAreaValue, desempenoIASeleccionado]);
+
+            // DATA VARIABLES based on Selection
+            // 1. Available Areas
+            const availableAreas = useMemo(() => {
+                if (!formData.nivel) return [];
+                return MINEDU_DATA.niveles[formData.nivel]?.areas || [];
+            }, [formData.nivel]);
+
+            // 2. Available Competencies (Strict)
+            const availableCompetencies = useMemo(() => {
+                // Priority: EPT Options
+                if (formData.area === 'Educación para el Trabajo' && eptData && eptData.competencias) {
+                    return eptData.competencias.map(c => c.nombre);
+                }
+
+                if (customAreaEnabled) return []; // Custom Area = Manual Entry
+                const areaData = MINEDU_DATA.curriculo[formData.area];
+                if (!areaData) return [];
+                return Object.keys(areaData);
+            }, [formData.area, customAreaEnabled, eptData]);
+
+            // 3. Available Capacities (Strict)
+            const availableCapacities = useMemo(() => {
+                // Priority: EPT Options
+                if (formData.area === 'Educación para el Trabajo' && eptData && eptData.competencias) {
+                    const compObj = eptData.competencias.find(c => c.nombre === formData.competencia);
+                    return compObj ? compObj.capacidades : [];
+                }
+
+                if (customAreaEnabled || !formData.competencia) return [];
+                const areaData = MINEDU_DATA.curriculo[formData.area];
+                return areaData ? (areaData[formData.competencia] || []) : [];
+            }, [formData.area, formData.competencia, customAreaEnabled, eptData]);
+
+            // 4. Available Desempenos (NEW for EPT)
+            const availableDesempenosEPT = useMemo(() => {
+                if (formData.area === 'Educación para el Trabajo' && eptData && eptData.competencias) {
+                    const compObj = eptData.competencias.find(c => c.nombre === formData.competencia);
+                    return compObj ? compObj.desempenos : [];
+                }
+                return [];
+            }, [formData.area, formData.competencia, eptData]);
+
+            // 4. Transversals
+            const availableTransversals = useMemo(() => {
+                return Object.keys(MINEDU_DATA.transversales.competencias || {});
+            }, []);
+
+            const availableCapTransversals = useMemo(() => {
+                if (!formData.comp_transversal) return [];
+                return MINEDU_DATA.transversales.competencias[formData.comp_transversal] || [];
+            }, [formData.comp_transversal]);
+
+            // 5. Enfoques
+            const availableEnfoques = useMemo(() => Object.keys(MINEDU_DATA.enfoques || {}), []);
+            const availableValores = useMemo(() => {
+                if (!formData.enfoque) return [];
+                return MINEDU_DATA.enfoques[formData.enfoque]?.valores || [];
+            }, [formData.enfoque]);
+
+
+            // THEME DERIVATION
+            const getTheme = () => {
+                switch (formData.nivel) {
+                    case 'Inicial': return { bg: 'from-emerald-400/10 to-teal-500/10', accent: 'text-teal-600', border: 'border-teal-200' };
+                    case 'Primaria': return { bg: 'from-blue-400/10 to-indigo-500/10', accent: 'text-indigo-600', border: 'border-indigo-200' };
+                    case 'Secundaria': return { bg: 'from-orange-400/10 to-red-500/10', accent: 'text-orange-600', border: 'border-orange-200' };
+                    default: return { bg: 'bg-gray-50', accent: 'text-gray-600', border: 'border-gray-200' };
+                }
+            };
+            const theme = getTheme();
+
+            // DERIVED DATA
+            const getGradeOptions = () => {
+                if (formData.nivel === 'Inicial') return ['0-2 años', '3-5 años'];
+                if (formData.nivel === 'Primaria') return ['1°', '2°', '3°', '4°', '5°', '6°'];
+                if (formData.nivel === 'Secundaria') return ['1°', '2°', '3°', '4°', '5°'];
+                return [];
+            };
+
+            const infoMessages = {
+                'competencia': "Facultad de combinar capacidades para lograr un propósito en una situación determinada.",
+                'capacidad': "Recursos (conocimientos, habilidades, actitudes) para actuar de manera competente.",
+                'desempeno': "Descripción específica y observable de lo que hace el estudiante.",
+                'comp_transversal': "Competencias que se desarrollan a la par que las áreas curriculares (TICs, Autonomía).",
+                'capacidad transversal': "Recursos específicos de la competencia transversal.",
+                'enfoque transversal': "Concepción sobre las personas y sus relaciones que se traduce en valores.",
+                'valor': "Pautas de comportamiento que se fomentan en la comunidad educativa."
+            };
+
+            // HANDLERS
+            const handleChange = (e) => {
+                const { name, value } = e.target;
+
+                // DEPENDENCY LOGIC (Resetting downstream fields)
+                let updates = { [name]: value };
+
+                if (name === 'nivel') {
+                    updates.grado = "";
+                    updates.area = "";
+                    updates.competencia = "";
+                    updates.capacidad = "";
+                    updates.desempeno = "";
+                }
+                else if (name === 'area') {
+                    updates.competencia = "";
+                    updates.capacidad = "";
+                    updates.desempeno = "";
+                }
+                else if (name === 'competencia') {
+                    updates.capacidad = "";
+                    updates.desempeno = ""; // Usually Desempeño depends on Comp
+                }
+                else if (name === 'comp_transversal') {
+                    updates.cap_transversal = "";
+                }
+                if (name === 'enfoque') {
+                    updates.valor = "";
+                }
+
+                // STRICT AI CHECK: If user edits desempeño manually, invalidate selection
+                if (name === 'desempeno') {
+                    setDesempenoIASeleccionado(false);
+                }
+
+                setFormData(prev => ({ ...prev, ...updates }));
+            };
+
+            // Old handlers removed
+
+
+            // ---------------------------------------------------------
+            // 2. ESTADOS Y UTILIDADES PARA LA IA 
+            // ---------------------------------------------------------
+
+            // Referencia para DEBOUNCE MANUAL del botón
+            const lastClickTimeRef = useRef(0);
+
+            // Función Debounce Universal
+            const debounce = (func, delay) => {
+                let timeoutId;
+                return (...args) => {
+                    if (timeoutId) clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        func(...args);
+                    }, delay);
+                };
+            };
+
+            // Referencia para cancelar solicitudes anteriores si el componente se desmonta (opcional, pero buena práctica)
+            // En este caso, usaremos una ref para mantener la función debounced estable entre renderizados.
+
+            // LA LÓGICA CORE DE PEDIR SUGERENCIAS (SIN DEBOUNCE AÚN)
+            const realizarPeticionIA = async (field, displayTitle, currentFormData) => {
+                // Validaciones previas
+                if (loadingState[field]) return;
+                if (!currentFormData.tema || !currentFormData.nivel) {
+                    // Solo mostramos alerta si es un trigger manual explícito o si el usuario ya escribió bastante
+                    // Para auto-search silencioso, mejor no interrumpir con modales a menos que sea crítico.
+                    // Pero mantendremos la lógica del usuario de "Evitar pedir si faltan datos".
+                    return;
+                }
+
+                setLoadingState(prev => ({ ...prev, [field]: true }));
+                setSuggestions(prev => ({ ...prev, [field]: [] }));
+
+                let attempts = 0;
+                const maxRetries = 2;
+
+                const executeFetch = async () => {
+                    try {
+                        const payload = {
+                            tema: currentFormData.tema,
+                            nivel: currentFormData.nivel,
+                            grado: currentFormData.grado,
+                            area: currentFormData.area || "General",
+                            campo: displayTitle,
+                            format: 'short'
+                        };
+
+                        const res = await fetch('/suggest', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (res.status === 429) throw new Error("SERVICE_BUSY");
+
+                        const data = await res.json();
+                        if (data.error) throw new Error(data.error);
+
+                        if (data.sugerencias) {
+                            setSuggestions(prev => ({ ...prev, [field]: data.sugerencias }));
+                            setActiveSuggestion(field); // Aseguramos que se muestre
+                        }
+                    } catch (err) {
+                        if (err.message === "SERVICE_BUSY" && attempts < maxRetries) {
+                            attempts++;
+                            setSuggestions(prev => ({ ...prev, [field]: [`STATUS:WAITING:${attempts}`] }));
+                            setTimeout(() => executeFetch(), 5000); // 5s retry
+                        } else {
+                            // MENSAJE PERSONALIZADO 429
+                            let msg = err.message === "SERVICE_BUSY"
+                                ? "Límite alcanzado, intenta en unos minutos."
+                                : err.message;
+
+                            setSuggestions(prev => ({ ...prev, [field]: [`ERROR:${msg}`] }));
+                        }
+                    } finally {
+                        // Solo apagamos loading si ya terminamos de intentar
+                        if (attempts >= maxRetries || attempts === 0) { // Simple logic check
+                            setLoadingState(prev => ({ ...prev, [field]: false }));
+                        }
+                    }
+                };
+
+                await executeFetch();
+            };
+
+            // CREAMOS LA VERSIÓN DEBOUNCED (Memorizada para no recrearse)
+            const solicitarSugerenciasDebounced = useMemo(() => debounce((field, title, data) => {
+                realizarPeticionIA(field, title, data);
+            }, 1000), []); // 1000ms delay
+
+
+            // EVENTO UNIFICADO PARA DESEMPEÑO
+            const handleDesempenoChange = (e) => {
+                const val = e.target.value;
+
+                // 1. Actualizar estado local (React)
+                setFormData(prev => ({ ...prev, desempeno: val }));
+
+                // 2. Invalidar selección previa de IA (si el usuario edita)
+                setDesempenoIASeleccionado(false);
+
+                // NO AUTO TRIGGER
+            };
+
+            // BUTTON TRIGGER WITH DEBOUNCE (1s)
+            const handleManualAISuggestion = () => {
+                const now = Date.now();
+                if (now - lastClickTimeRef.current < 1000) {
+                    console.log("Debounce: Clicked too fast");
+                    return;
+                }
+                lastClickTimeRef.current = now;
+
+                if (!formData.tema || !formData.nivel || !formData.grado || !formData.area) {
+                    setInfoModal({
+                        isOpen: true,
+                        title: "Faltan Datos",
+                        content: "Por favor completa Tema, Nivel, Grado y Área antes de consultar a la IA."
+                    });
+                    return;
+                }
+
+                realizarPeticionIA('desempeno', 'Desempeño', formData);
+            };
+
+            const handleAISuggestionSelect = (field, value) => {
+                if (field === 'desempeno') {
+                    setFormData(prev => ({
+                        ...prev,
+                        [field]: value
+                    }));
+                    setDesempenoIASeleccionado(true);
+                    setActiveSuggestion(null);
+                } else {
+                    setFormData(prev => ({ ...prev, [field]: value }));
+                    setActiveSuggestion(null);
+                }
+            };
+
+            const handleGenerate = async (e) => {
+                e.preventDefault();
+                if (!isFormComplete) return; // Double check
+
+                setLoadingState(prev => ({ ...prev, generating: true }));
+                setError(null);
+                setGeneratedSession(null);
+
+                // MERGE SCHOOL DATA INTO FORM DATA
+                const payload = {
+                    ...formData,
+                    ...schoolSetup.data // ADD DRE, UGEL, IE, DISTRITO
+                };
+
+                try {
+                    const res = await fetch('/generate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (res.status === 429) {
+                        throw new Error("La IA está ocupada. Intenta de nuevo en unos segundos.");
+                    }
+
+                    const data = await res.json();
+                    if (data.error) throw new Error(data.error);
+                    setGeneratedSession(data.sesion);
+                    setShowResultModal(true);
+                } catch (err) {
+                    setError(err.message);
+                } finally {
+                    setLoadingState(prev => ({ ...prev, generating: false }));
+                }
+            };
+
+            const handleDownload = async () => {
+                window.location.href = '/download';
+            };
+
+            const handleReset = () => {
+                setFormData({
+                    tema: "EL APARATO DIGESTIVO",
+                    nivel: "",
+                    grado: "",
+                    area: "",
+                    competencia: "",
+                    capacidad: "",
+                    desempeno: "",
+                    comp_transversal: "",
+                    cap_transversal: "",
+                    enfoque: "",
+                    valor: "",
+                    tiempo: "90",
+                    especialidad: "",
+                    tipo_sesion: "Detallada"
+                });
+                setCustomAreaEnabled(false);
+                setCustomAreaValue("");
+                setEptData(null);
+                setSuggestions({});
+                setActiveSuggestion(null);
+                setGeneratedSession(null);
+                setShowResultModal(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            const handleCustomAreaToggle = (enabled) => {
+                setCustomAreaEnabled(enabled);
+                if (enabled) {
+                    setFormData(prev => ({
+                        ...prev,
+                        area: "Educación para el Trabajo",
+                        competencia: "",
+                        capacidad: "",
+                        desempeno: "",
+                        especialidad: ""
+                    }));
+                } else {
+                    setFormData(prev => ({
+                        ...prev,
+                        area: "",
+                        competencia: "",
+                        capacidad: "",
+                        desempeno: "",
+                        especialidad: ""
+                    }));
+                }
+                setEptData(null); // Reset EPT options
+                setSuggestions({});
+                setDesempenoIASeleccionado(false);
+            };
+
+
+            const handleGenerateEPT = async () => {
+                if (!formData.especialidad) return;
+
+                setLoadingState(prev => ({ ...prev, ept: true }));
+                try {
+                    const res = await fetch('/generate_ept_structure', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    const data = await res.json();
+
+                    if (data.error) throw new Error(data.error);
+
+                    // STORE OPTIONS
+                    setEptData(data);
+
+                    // Use standard select mode, but powered by eptData (via useMemos)
+                    setCustomAreaEnabled(false); // Ensure selects are shown
+
+                    // Reset fields to force user selection
+                    setFormData(prev => ({
+                        ...prev,
+                        competencia: "",
+                        capacidad: "",
+                        desempeno: ""
+                    }));
+
+                    setInfoModal({
+                        isOpen: true,
+                        title: "Opciones Generadas",
+                        content: "Se han generado opciones curriculares para tu especialidad. Ahora selecciona la Competencia, Capacidad y Desempeño de las listas desplegables."
+                    });
+
+                } catch (err) {
+                    setInfoModal({ isOpen: true, title: "Error", content: err.message });
+                } finally {
+                    setLoadingState(prev => ({ ...prev, ept: false }));
+                }
+            };
+
+            return (
+                <div className="relative min-h-screen">
+                    <div className="container mx-auto px-4 py-12 max-w-5xl transition-all duration-500 opacity-100">
+                        <AnimatePresence>
+                            <InfoModal
+                                key="modal"
+                                isOpen={infoModal.isOpen}
+                                title={infoModal.title}
+                                content={infoModal.content}
+                                onClose={() => setInfoModal({ ...infoModal, isOpen: false })}
+                            />
+                        </AnimatePresence>
+
+                        {/* HEADER - Premium & Clean */}
+                        <header className="mb-10 relative z-10 flex flex-col items-center">
+                            <motion.div
+                                initial={{ y: -20, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                className="text-center"
+                            >
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100/50 text-indigo-700 text-xs font-bold uppercase tracking-widest mb-4 shadow-sm">
+                                    <Icon name="sparkles" size={12} className="text-indigo-500" />
+                                    Plataforma Educativa Oficial
+                                </div>
+
+                                <h1 className="text-5xl md:text-7xl font-sans font-extrabold mb-3 tracking-tight text-slate-800 drop-shadow-sm">
+                                    ALLIMA <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">PUNCHAW</span>
+                                </h1>
+
+                                <p className="text-lg md:text-xl text-slate-500 font-medium max-w-2xl mx-auto leading-relaxed">
+                                    Generador <span className="text-indigo-600 font-semibold">Inteligente</span> de Sesiones de Aprendizaje
+                                    <span className="mx-2 text-slate-300">|</span>
+                                    <span className="text-slate-500">CNEB 2025</span>
+                                </p>
+                            </motion.div>
+
+                            <div className="absolute left-4 top-4 md:left-0 md:top-1/2 md:-translate-y-1/2">
+                                <a href="index.html" className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-white/60 hover:bg-white/90 border border-white/50 text-slate-600 hover:text-indigo-700 transition-all shadow-sm hover:shadow-md backdrop-blur-sm">
+                                    <Icon name="arrow-left" size={18} className="transition-transform group-hover:-translate-x-1" />
+                                    <span className="font-semibold text-sm">Volver al Inicio</span>
+                                </a>
+                            </div>
+                        </header>
+
+                        {/* MAIN FORM */}
+                        {/* MAIN FORM - The "Smart Panel" */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.1 }}
+                            className="glass-card rounded-[2.5rem] p-8 md:p-14 mb-16 relative overflow-hidden"
+                        >
+                            {/* Decorative top shimmer */}
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent"></div>
+                            <form onSubmit={(e) => e.preventDefault()}>
+
+                                {/* 1. DATOS GENERALES */}
+                                <div className="mb-10">
+                                    <h3 className="text-xl font-bold text-gray-800 mb-8 flex items-center pb-3 border-b border-gray-200/50">
+                                        <Icon name="layout-dashboard" className="mr-3 text-indigo-500" />
+                                        Datos Generales
+                                    </h3>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <FormField label="Tema de la Sesión" icon="book-open" delay={0.1}>
+                                            <input
+                                                name="tema"
+                                                value={formData.tema}
+                                                onChange={handleChange}
+                                                className="glass-input w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium text-gray-800"
+                                                placeholder="Ej: El Ciclo del Agua"
+                                                required
+                                            />
+                                        </FormField>
+
+                                        <FormField label="Tiempo (minutos)" icon="clock" delay={0.1}>
+                                            <input
+                                                type="number"
+                                                name="tiempo"
+                                                value={formData.tiempo}
+                                                onChange={handleChange}
+                                                min="45" max="180" step="5"
+                                                className="glass-input w-full px-4 py-3 rounded-xl focus:ring-2 focus:ring-indigo-400 font-medium text-gray-800"
+                                            />
+                                        </FormField>
+
+                                        <FormField label="Tipo de Sesión" icon="layers" delay={0.15}>
+                                            <div className="flex bg-white/50 p-1 rounded-xl border border-indigo-100 h-[50px] items-center">
+                                                {['Resumida', 'Detallada'].map(type => (
+                                                    <button
+                                                        key={type}
+                                                        type="button"
+                                                        onClick={() => setFormData(prev => ({ ...prev, tipo_sesion: type }))}
+                                                        className={`flex-1 h-full rounded-lg text-sm font-bold transition-all ${formData.tipo_sesion === type
+                                                            ? 'bg-indigo-600 text-white shadow-md'
+                                                            : 'text-gray-500 hover:text-indigo-600'
+                                                            }`}
+                                                    >
+                                                        {type}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </FormField>
+
+                                        <FormField label="Nivel Educativo" icon="graduation-cap" delay={0.2}>
+                                            <GlassSelect
+                                                name="nivel"
+                                                value={formData.nivel}
+                                                onChange={handleChange}
+                                                options={['Inicial', 'Primaria', 'Secundaria']}
+                                                placeholder="Selecciona el Nivel"
+                                                required
+                                            />
+                                        </FormField>
+
+                                        <FormField label="Grado / Edad" icon="bar-chart-3" delay={0.3}>
+                                            <GlassSelect
+                                                name="grado"
+                                                value={formData.grado}
+                                                onChange={handleChange}
+                                                options={getGradeOptions()}
+                                                placeholder={formData.nivel ? "Selecciona el Grado" : "Selecciona Nivel primero"}
+                                                disabled={!formData.nivel}
+                                                required
+                                            />
+                                        </FormField>
+                                    </div>
+
+                                    {/* Custom Area Toggle */}
+                                    <div className="mt-8 p-6 bg-indigo-50/50 rounded-2xl border border-indigo-100/60">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <span className="text-gray-700 font-semibold flex items-center">
+                                                <Icon name="copy-plus" size={18} className="mr-2 text-indigo-600" />
+                                                Área Curricular
+                                            </span>
+                                            <div className="flex bg-white rounded-lg p-1 shadow-sm border border-gray-100">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleCustomAreaToggle(false)}
+                                                    className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${!customAreaEnabled ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                                                >Estándar</button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handleCustomAreaToggle(true)}
+                                                    className={`px-4 py-1.5 rounded-md text-sm font-bold transition-all ${customAreaEnabled ? 'bg-indigo-100 text-indigo-700 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
+                                                >Personalizada</button>
+                                            </div>
+                                        </div>
+
+                                        {!customAreaEnabled ? (
+                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                                <GlassSelect
+                                                    name="area"
+                                                    value={formData.area}
+                                                    onChange={handleChange}
+                                                    options={availableAreas}
+                                                    placeholder={formData.nivel ? "Selecciona el Área" : "Primero selecciona Nivel"}
+                                                    disabled={!formData.nivel}
+                                                    required={!customAreaEnabled}
+                                                />
+                                            </motion.div>
+                                        ) : (
+                                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
+                                                <div className="bg-orange-50 p-4 rounded-xl border border-orange-200">
+                                                    <div className="flex items-center text-orange-800 font-bold mb-2">
+                                                        <Icon name="briefcase" className="mr-2" />
+                                                        Modo EPT: Educación para el Trabajo
+                                                    </div>
+                                                    <p className="text-sm text-orange-600 mb-3">
+                                                        Ingresa la especialidad para generar opciones curriculares personalizadas.
+                                                    </p>
+
+                                                    <div className="flex flex-col md:flex-row gap-3">
+                                                        <input
+                                                            type="text"
+                                                            name="especialidad"
+                                                            value={formData.especialidad}
+                                                            onChange={handleChange}
+                                                            placeholder="Especialidad (ej: Robótica, Cocina, Ebanistería...)"
+                                                            className="glass-input w-full px-4 py-3 rounded-xl border-orange-300 focus:ring-orange-500 bg-white"
+                                                            required
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleGenerateEPT}
+                                                            disabled={loadingState.ept || !formData.especialidad}
+                                                            className={`px-4 py-3 rounded-xl font-bold text-white shadow-md transition-all whitespace-nowrap flex items-center justify-center
+                                                            ${loadingState.ept || !formData.especialidad ? 'bg-orange-300' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:scale-105'}
+                                                        `}
+                                                        >
+                                                            {loadingState.ept ? <Icon name="loader-2" className="animate-spin mr-2" /> : <Icon name="sparkles" className="mr-2" />}
+                                                            Generar Opciones
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* EPT SPECIALTY SECTION - DYNAMIC (Only in Standard Mode) */}
+                                {formData.area === 'Educación para el Trabajo' && !customAreaEnabled && (
+                                    <motion.div
+                                        initial={{ opacity: 0, height: 0 }}
+                                        animate={{ opacity: 1, height: 'auto' }}
+                                        className="mt-6 p-6 bg-gradient-to-r from-orange-50 to-orange-100/50 rounded-2xl border border-orange-200 shadow-sm"
+                                    >
+                                        <h4 className="font-bold text-orange-800 flex items-center mb-4 text-lg">
+                                            <Icon name="briefcase" className="mr-2" />
+                                            Especialidad Técnica (EPT)
+                                        </h4>
+                                        <div className="flex flex-col md:flex-row gap-4 items-end">
+                                            <div className="flex-1 w-full">
+                                                <label className="block text-sm font-bold text-orange-700 mb-2">Especialidad / Módulo</label>
+                                                <input
+                                                    name="especialidad"
+                                                    value={formData.especialidad}
+                                                    onChange={handleChange}
+                                                    placeholder="Ej: Computación, Ebanistería, Cocina..."
+                                                    className="glass-input w-full px-4 py-3 rounded-xl border-orange-200 focus:ring-orange-400 bg-white"
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={handleGenerateEPT}
+                                                disabled={loadingState.ept || !formData.especialidad}
+                                                className={`px-6 py-3 rounded-xl font-bold text-sm text-white shadow-lg transition-all flex items-center justify-center shrink-0 h-[50px]
+                                                ${loadingState.ept || !formData.especialidad ? 'bg-orange-300 cursor-not-allowed' : 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 hover:scale-105 active:scale-95'}
+                                            `}
+                                            >
+                                                {loadingState.ept ? <Icon name="loader-2" className="animate-spin" /> : <Icon name="sparkles" className="mr-2" />}
+                                                {loadingState.ept ? "Generando..." : "Generar Opciones"}
+                                            </button>
+                                        </div>
+                                        <p className="text-xs text-orange-600 mt-2 font-medium">
+                                            <Icon name="info" size={12} className="inline mr-1" />
+                                            La IA generará opciones específicas de Competencias, Capacidades y Desempeños para que elijas.
+                                        </p>
+                                    </motion.div>
+                                )}
+
+                                {/* 2. COMPETENCIAS Y CAPACIDADES */}
+                                {formData.nivel && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        className={`mb-10 p-8 rounded-3xl border border-white/60 shadow-inner bg-gradient-to-br ${theme.bg}`}
+                                    >
+                                        <h3 className={`text-xl font-bold mb-8 flex items-center ${theme.accent}`}>
+                                            <Icon name="brain-circuit" className="mr-3" />
+                                            Currículo Nacional (CNEB)
+                                        </h3>
+
+                                        <div className="flex flex-col gap-8">
+                                            <FormField
+                                                label="Competencia"
+                                                icon="target"
+                                                infoAction={() => setInfoModal({ isOpen: true, title: "Competencia", content: infoMessages['competencia'] })}
+                                            >
+                                                {customAreaEnabled ? (
+                                                    <input
+                                                        name="competencia"
+                                                        value={formData.competencia}
+                                                        onChange={handleChange}
+                                                        placeholder="Escribe la competencia..."
+                                                        className="glass-input w-full px-4 py-3 rounded-xl"
+                                                    />
+                                                ) : (
+                                                    <GlassSelect
+                                                        name="competencia"
+                                                        value={formData.competencia}
+                                                        onChange={handleChange}
+                                                        options={availableCompetencies}
+                                                        placeholder={availableCompetencies.length ? "Selecciona la Competencia" : "Primero selecciona un Área válida"}
+                                                        disabled={!availableCompetencies.length}
+                                                    />
+                                                )}
+                                            </FormField>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                                <FormField
+                                                    label="Capacidad"
+                                                    icon="wrench"
+                                                    infoAction={() => setInfoModal({ isOpen: true, title: "Capacidad", content: infoMessages['capacidad'] })}
+                                                >
+                                                    {customAreaEnabled ? (
+                                                        <input
+                                                            name="capacidad"
+                                                            value={formData.capacidad}
+                                                            onChange={handleChange}
+                                                            placeholder="Escribe la capacidad..."
+                                                            className="glass-input w-full px-4 py-3 rounded-xl"
+                                                        />
+                                                    ) : (
+                                                        <GlassSelect
+                                                            name="capacidad"
+                                                            value={formData.capacidad}
+                                                            onChange={handleChange}
+                                                            options={availableCapacities}
+                                                            placeholder={availableCapacities.length ? "Selecciona la Capacidad" : "Primero selecciona Competencia"}
+                                                            disabled={!availableCapacities.length}
+                                                        />
+                                                    )}
+                                                </FormField>
+
+                                                <FormField
+                                                    label="Desempeño (IA Asistente)"
+                                                    icon="sparkles"
+                                                    infoAction={() => setInfoModal({ isOpen: true, title: "Desempeño", content: infoMessages['desempeno'] })}
+                                                >
+                                                    {availableDesempenosEPT.length > 0 ? (
+                                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                                                            <GlassSelect
+                                                                name="desempeno"
+                                                                value={formData.desempeno}
+                                                                onChange={(e) => {
+                                                                    setFormData(prev => ({ ...prev, desempeno: e.target.value }));
+                                                                    setDesempenoIASeleccionado(true);
+                                                                }}
+                                                                options={availableDesempenosEPT}
+                                                                placeholder="Seleccione un Desempeño EPT"
+                                                            />
+                                                            <div className="flex justify-end mt-1">
+                                                                <span className="text-xs text-emerald-600 font-bold flex items-center bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100">
+                                                                    <Icon name="check-circle-2" size={12} className="mr-1" /> Opción validada por IA
+                                                                </span>
+                                                            </div>
+                                                        </motion.div>
+                                                    ) : (
+                                                        <>
+                                                            <div className="relative">
+                                                                <textarea
+                                                                    name="desempeno"
+                                                                    value={formData.desempeno}
+                                                                    onChange={handleDesempenoChange} // NEW DEBOUNCED HANDLER
+                                                                    placeholder="Escribe para buscar sugerencias IA..."
+                                                                    className={`glass-input w-full px-4 py-3 rounded-xl h-[80px] min-h-[80px] resize-none text-sm leading-snug pr-12
+                                                                    ${desempenoIASeleccionado ? 'border-emerald-400 focus:border-emerald-500 bg-emerald-50/30' : 'border-indigo-200'}
+                                                                    transition-colors duration-300
+                                                                `}
+                                                                />
+                                                                {/* Status Icon */}
+                                                                <div className="absolute right-3 top-3 pointer-events-none">
+                                                                    {desempenoIASeleccionado ? (
+                                                                        <div className="text-emerald-500 bg-white rounded-full p-1 shadow-sm">
+                                                                            <Icon name="check-circle-2" size={20} />
+                                                                        </div>
+                                                                    ) : loadingState['desempeno'] ? (
+                                                                        <div className="text-indigo-500">
+                                                                            <Icon name="loader-2" className="animate-spin" size={20} />
+                                                                        </div>
+                                                                    ) : (
+                                                                        <div className="text-gray-300">
+                                                                            <Icon name="circle-dashed" size={20} />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+
+                                                            <button
+                                                                type="button"
+                                                                onClick={handleManualAISuggestion}
+                                                                disabled={loadingState['desempeno']}
+                                                                className={`mt-2 w-full py-2 rounded-xl text-sm font-bold flex items-center justify-center space-x-2 transition-all
+                                                                ${loadingState['desempeno'] ? 'bg-indigo-100 text-indigo-400 cursor-not-allowed' : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md hover:shadow-lg'}
+                                                            `}
+                                                            >
+                                                                {loadingState['desempeno'] ? (
+                                                                    <><Icon name="loader-2" className="animate-spin" size={16} /> <span>Consultando IA...</span></>
+                                                                ) : (
+                                                                    <><Icon name="sparkles" size={16} /> <span>Generar sugerencias IA</span></>
+                                                                )}
+                                                            </button>
+
+                                                            <SuggestionBox
+                                                                isVisible={activeSuggestion === 'desempeno'}
+                                                                isLoading={loadingState.desempeno}
+                                                                suggestions={suggestions.desempeno || []}
+                                                                onSelect={(val) => handleAISuggestionSelect('desempeno', val)}
+                                                                onClose={() => setActiveSuggestion(null)}
+                                                            />
+                                                            <span className="text-xs text-gray-400 mt-1 ml-1 block">El CNEB tiene miles de desempeños. Usa la IA para encontrar el exacto o escríbelo.</span>
+                                                        </>
+                                                    )}
+                                                </FormField>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* 3. TRANSVERSALES */}
+                                {formData.nivel && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.2 }}
+                                        className="mb-10"
+                                    >
+                                        <h3 className="text-xl font-bold text-gray-800 mb-8 flex items-center pb-3 border-b border-gray-200/50">
+                                            <Icon name="compass" className="mr-3 text-indigo-500" />
+                                            Transversalidad
+                                        </h3>
+
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                            <div className="bg-white/40 p-6 rounded-2xl border border-white/50 space-y-6">
+                                                <h4 className="font-bold text-gray-700 text-sm uppercase tracking-wider mb-4">Competencias Transversales</h4>
+                                                <FormField label="Competencia" icon="globe">
+                                                    <GlassSelect
+                                                        name="comp_transversal"
+                                                        value={formData.comp_transversal}
+                                                        onChange={handleChange}
+                                                        options={availableTransversals}
+                                                        placeholder="Selecciona..."
+                                                    />
+                                                </FormField>
+                                                <FormField label="Capacidad" icon="zap">
+                                                    <GlassSelect
+                                                        name="cap_transversal"
+                                                        value={formData.cap_transversal}
+                                                        onChange={handleChange}
+                                                        options={availableCapTransversals}
+                                                        placeholder="Selecciona Comp. primero..."
+                                                        disabled={!availableCapTransversals.length}
+                                                    />
+                                                </FormField>
+                                            </div>
+
+                                            <div className="bg-white/40 p-6 rounded-2xl border border-white/50 space-y-6">
+                                                <h4 className="font-bold text-gray-700 text-sm uppercase tracking-wider mb-4">Enfoques Transversales</h4>
+                                                <FormField label="Enfoque" icon="scroll">
+                                                    <GlassSelect
+                                                        name="enfoque"
+                                                        value={formData.enfoque}
+                                                        onChange={handleChange}
+                                                        options={availableEnfoques}
+                                                        placeholder="Selecciona..."
+                                                    />
+                                                </FormField>
+                                                <FormField label="Valor" icon="heart">
+                                                    <GlassSelect
+                                                        name="valor"
+                                                        value={formData.valor}
+                                                        onChange={handleChange}
+                                                        options={availableValores}
+                                                        placeholder="Selecciona Enfoque primero..."
+                                                        disabled={!availableValores.length}
+                                                    />
+                                                </FormField>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                )}
+
+                                {/* ACTION BUTTON - The "Magic" Element */}
+                                <div className="relative group w-full mt-8">
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                                    <motion.button
+                                        whileHover={{ scale: isFormComplete ? 1.01 : 1 }}
+                                        whileTap={{ scale: isFormComplete ? 0.99 : 1 }}
+                                        type="button"
+                                        onClick={handleGenerate}
+                                        disabled={loadingState.generating || !isFormComplete}
+                                        className={`relative w-full py-6 rounded-2xl font-bold text-lg md:text-xl tracking-wide shadow-2xl overflow-hidden flex items-center justify-center transition-all border border-white/20
+                                    ${loadingState.generating || !isFormComplete
+                                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none border-transparent'
+                                                : 'magic-button-bg text-white hover:shadow-indigo-500/40 cursor-pointer'}`}
+                                    >
+                                        {loadingState.generating ? (
+                                            <div className="flex items-center space-x-3">
+                                                <Icon name="loader-2" className="animate-spin text-white/80" size={24} />
+                                                <span className="font-medium animate-pulse">Analizando parámetros y creando sesión...</span>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center space-x-3 z-10">
+                                                <div className="p-2 bg-white/20 rounded-lg backdrop-blur-sm">
+                                                    <Icon name="wand-2" className="text-white" size={24} />
+                                                </div>
+                                                <span>Generar Sesión Ahora</span>
+                                                <Icon name="chevron-right" className="text-white/50 group-hover:translate-x-1 transition-transform" size={20} />
+                                            </div>
+                                        )}
+                                    </motion.button>
+
+                                    {!isFormComplete && (
+                                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-4 w-72 bg-gray-800 text-white text-xs px-4 py-3 rounded-xl opacity-0 group-hover:opacity-100 transition-all pointer-events-none text-center shadow-2xl z-50">
+                                            <p className="font-bold mb-1 text-amber-400 flex items-center justify-center">
+                                                <Icon name="alert-triangle" size={12} className="mr-1.5" /> Atención
+                                            </p>
+                                            {!desempenoIASeleccionado && formData.desempeno ? "Debes seleccionar una sugerencia de la IA. No se permite texto manual." : "Completa todos los campos y selecciona el Desempeño con la IA para continuar."}
+                                            <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 border-4 border-transparent border-t-gray-800"></div>
+                                        </div>
+                                    )}
+                                </div>
+
+                            </form>
+                        </motion.div >
+
+                        {/* RESULTS MODAL (Replaces Inline Section) */}
+                        < AnimatePresence >
+                            {showResultModal && (
+                                <ResultModal
+                                    isOpen={showResultModal}
+                                    session={generatedSession}
+                                    onDownload={handleDownload}
+                                    onReset={handleReset}
+                                />
+                            )}
+                        </AnimatePresence >
+
+                        {error && (
+                            <div className="fixed bottom-4 right-4 bg-red-100 text-red-700 px-6 py-4 rounded-xl border border-red-200 shadow-2xl flex items-center z-50">
+                                <Icon name="alert-triangle" className="mr-3" />
+                                {error}
+                            </div>
+                        )}
+
+                    </div>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<SessionGenerator />);
+    </script>
+</body>
+
+</html>

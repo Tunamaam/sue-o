@@ -1,0 +1,545 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Educativa Premium</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS (for new components) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+
+<body class="landing-body">
+    <!-- Decorative Overlays -->
+    <div class="river-bg-overlay"></div>
+    <img src="" class="animals-watermark" alt="">
+
+    <div class="app-container">
+        <!-- Sidebar (Left) -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon"><i class="fa-solid fa-shapes"></i></div>
+                <span class="logo-text">AMAWTA</span>
+            </div>
+
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <a href="#" class="nav-item active">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Inicio</span>
+                    </a>
+                </div>
+
+                <div class="nav-label">Creación</div>
+                <div class="nav-group">
+                    <a href="#" class="nav-item">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>Herramientas</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa-regular fa-comments"></i>
+                        <span>Kali Chat</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa-regular fa-folder-open"></i>
+                        <span>Documentos</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa-solid fa-users-viewfinder"></i>
+                        <span>Salas</span>
+                    </a>
+                </div>
+
+                <div class="nav-label">Conoce mas</div>
+                <div class="nav-group">
+                    <a href="#" class="nav-item">
+                        <i class="fa-regular fa-star"></i>
+                        <span>Referidos</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                        <span>Formato escolar</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <i class="fa-regular fa-circle-question"></i>
+                        <span>Centro de ayuda</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content (Center) -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar">
+                <button class="menu-toggle"><i class="fa-solid fa-bars"></i></button>
+
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" placeholder="Busca herramientas o tutoriales...">
+                </div>
+
+                <!-- Theme Toggle & Actions -->
+                <div class="topbar-actions" style="display: flex; gap: 1rem; align-items: center;">
+                    <button id="theme-toggle" class="btn-icon" aria-label="Cambiar tema">
+                        <i class="fa-solid fa-moon"></i>
+                    </button>
+                    <!-- Mobile profile/actions if needed (hidden on desktop usually, but we keep structure) -->
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="content-wrapper">
+                <!-- Home View -->
+                <div id="view-home" class="view-section active">
+                    <!-- Hero Section -->
+                    <section class="hero-section">
+                        <!-- Tree Overlay inside Hero -->
+                        <img src="/static/images/animales.png" class="hero-tree-overlay" alt="">
+
+                        <div class="hero-content relative z-10">
+                            <h1>¡Hola, Maestro! <span class="wave">👋</span></h1>
+                            <p class="subtitle">¿Qué te gustaría crear hoy para tus alumnos?</p>
+
+                            <div class="quick-actions">
+                                <div class="action-card primary" style="cursor: pointer;">
+                                    <div class="card-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                                    <h3>Crea tu sesión</h3>
+                                    <p>Diseña clases impactantes con IA</p>
+                                    <div class="card-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-icon"><i class="fa-regular fa-file-lines"></i></div>
+                                    <h3>Revisa tus documentos</h3>
+                                    <p>Accede a tu historial</p>
+                                </div>
+                                <div class="action-card">
+                                    <div class="card-icon"><i class="fa-regular fa-comment-dots"></i></div>
+                                    <h3>Conversa con Kali</h3>
+                                    <p>Tu asistente virtual</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- NEW: Más creaciones educativas (Amazon Theme) -->
+                    <section class="mb-12">
+                        <div class="flex items-center mb-6 pl-4 border-l-4 border-emerald-500">
+                            <h2 class="text-2xl font-bold text-emerald-900">Más creaciones educativas</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                            <!-- Card 1: Programación anual -->
+                            <div
+                                class="group relative overflow-hidden glass rounded-2xl p-5 hover:bg-emerald-50/40 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 flex items-start">
+                                <div
+                                    class="absolute top-0 left-0 w-1 h-full bg-blue-500/50 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
+                                </div>
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-100 flex-shrink-0 flex items-center justify-center text-blue-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="book" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-lg font-bold text-gray-800 mb-1 group-hover:text-blue-700 transition-colors">
+                                        Programación anual</h3>
+                                    <p class="text-sm text-gray-600 leading-tight">Organiza todo tu año escolar con IA.
+                                    </p>
+                                </div>
+                                <i data-lucide="arrow-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-blue-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all self-center"></i>
+                            </div>
+
+                            <!-- Card 2: Unidad de aprendizaje -->
+                            <div
+                                class="group relative overflow-hidden glass rounded-2xl p-5 hover:bg-emerald-50/40 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 flex items-start">
+                                <div
+                                    class="absolute top-0 left-0 w-1 h-full bg-emerald-500/50 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
+                                </div>
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-emerald-100 to-teal-100 flex-shrink-0 flex items-center justify-center text-emerald-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="library" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-lg font-bold text-gray-800 mb-1 group-hover:text-emerald-700 transition-colors">
+                                        Unidad de aprendizaje</h3>
+                                    <p class="text-sm text-gray-600 leading-tight">Crea unidades completas listas para
+                                        usar.</p>
+                                </div>
+                                <i data-lucide="arrow-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-emerald-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all self-center"></i>
+                            </div>
+
+                            <!-- Card 3: Proyectos -->
+                            <div
+                                class="group relative overflow-hidden glass rounded-2xl p-5 hover:bg-emerald-50/40 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 flex items-start">
+                                <div
+                                    class="absolute top-0 left-0 w-1 h-full bg-lime-500/50 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
+                                </div>
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-lime-100 to-green-100 flex-shrink-0 flex items-center justify-center text-lime-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="sprout" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-lg font-bold text-gray-800 mb-1 group-hover:text-lime-700 transition-colors">
+                                        Proyectos</h3>
+                                    <p class="text-sm text-gray-600 leading-tight">Desarrolla proyectos innovadores.</p>
+                                </div>
+                                <i data-lucide="arrow-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-lime-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all self-center"></i>
+                            </div>
+
+                            <!-- Card 4: STEAM -->
+                            <div
+                                class="group relative overflow-hidden glass rounded-2xl p-5 hover:bg-emerald-50/40 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 flex items-start">
+                                <div
+                                    class="absolute top-0 left-0 w-1 h-full bg-indigo-500/50 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
+                                </div>
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-indigo-100 to-violet-100 flex-shrink-0 flex items-center justify-center text-indigo-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="microscope" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-lg font-bold text-gray-800 mb-1 group-hover:text-indigo-700 transition-colors">
+                                        STEAM</h3>
+                                    <p class="text-sm text-gray-600 leading-tight">Diseña actividades científicas y
+                                        creativas.</p>
+                                </div>
+                                <i data-lucide="arrow-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-indigo-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all self-center"></i>
+                            </div>
+
+                            <!-- Card 5: Proyecto de Aprendizaje -->
+                            <div
+                                class="group relative overflow-hidden glass rounded-2xl p-5 hover:bg-emerald-50/40 transition-all duration-300 cursor-pointer shadow-sm hover:shadow-lg hover:-translate-y-1 flex items-start">
+                                <div
+                                    class="absolute top-0 left-0 w-1 h-full bg-orange-500/50 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300">
+                                </div>
+                                <div
+                                    class="w-14 h-14 rounded-xl bg-gradient-to-br from-orange-100 to-amber-100 flex-shrink-0 flex items-center justify-center text-orange-600 mr-4 group-hover:scale-110 transition-transform">
+                                    <i data-lucide="puzzle" class="w-7 h-7"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3
+                                        class="text-lg font-bold text-gray-800 mb-1 group-hover:text-orange-700 transition-colors">
+                                        Proyecto de Aprendizaje</h3>
+                                    <p class="text-sm text-gray-600 leading-tight">Genera proyectos completos con IA.
+                                    </p>
+                                </div>
+                                <i data-lucide="arrow-right"
+                                    class="w-5 h-5 text-gray-400 group-hover:text-orange-500 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all self-center"></i>
+                            </div>
+
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Tools View -->
+                <div id="view-tools" class="view-section hidden">
+
+                    <!-- Tools Section -->
+                    <section class="tools-section">
+                        <div class="section-header">
+                            <h2>Nuestras herramientas</h2>
+                            <div class="filter-tabs">
+                                <button class="tab active">Todas</button>
+                                <button class="tab">Planificación</button>
+                                <button class="tab">Organización</button>
+                                <button class="tab">Evaluación</button>
+                                <button class="tab">Apoyo Visual</button>
+                                <button class="tab">Juegos</button>
+                            </div>
+                        </div>
+
+                        <div class="tools-grid">
+                            <!-- Tool Card 1 -->
+                            <div class="tool-card">
+                                <div class="tool-icon pink"><i class="fa-regular fa-image"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Apoyo Visual</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>Analizador de imagenes</h3>
+                                <p>Analiza las imagenes que desees con IA.</p>
+                            </div>
+
+                            <!-- Tool Card 2 -->
+                            <div class="tool-card">
+                                <div class="tool-icon purple"><i class="fa-solid fa-table-cells"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Juegos</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>Crucigrama</h3>
+                                <p>Crucigrama autogenerado por IA.</p>
+                            </div>
+
+                            <!-- Tool Card 3 -->
+                            <div class="tool-card">
+                                <div class="tool-icon blue"><i class="fa-solid fa-font"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Juegos</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>Sopa de letras</h3>
+                                <p>Sopa de letras autogenerada por IA.</p>
+                            </div>
+
+                            <!-- Tool Card 4 -->
+                            <div class="tool-card">
+                                <div class="tool-icon orange"><i class="fa-solid fa-presentation-screen"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Apoyo Visual</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>PresentaciÃ³n</h3>
+                                <p>PowerPoint generado por IA.</p>
+                            </div>
+
+                            <!-- Tool Card 5 -->
+                            <div class="tool-card">
+                                <div class="tool-icon green"><i class="fa-regular fa-file-pdf"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Apoyo Visual</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>Analizar PDF</h3>
+                                <p>Analiza y realiza consultas a tus documentos.</p>
+                            </div>
+
+                            <!-- Tool Card 6 -->
+                            <div class="tool-card">
+                                <div class="tool-icon red"><i class="fa-solid fa-paintbrush"></i></div>
+                                <div class="tool-tags">
+                                    <span class="tag">Apoyo Visual</span>
+                                    <button class="btn-fav"><i class="fa-regular fa-star"></i></button>
+                                </div>
+                                <h3>Ficha para colorear</h3>
+                                <p>Crear una ficha para colorear Ãºnica.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Right Panel (Right) -->
+        <aside class="right-panel">
+            <div class="profile-header">
+                <div class="user-profile-large">
+                    <div class="avatar large">M</div>
+                    <div class="user-info">
+                        <span class="username">Maestro</span>
+                        <span class="user-role">Plan Premium</span>
+                    </div>
+                    <div class="action-icon"><i class="fa-regular fa-bell"></i></div>
+                </div>
+            </div>
+
+
+
+            <div class="panel-section">
+                <h3><i class="fa-regular fa-star"></i> Mis Favoritos</h3>
+                <div class="favorites-list">
+                    <div class="favorite-item">
+                        <div class="fav-icon pink"><i class="fa-regular fa-image"></i></div>
+                        <div class="fav-info">
+                            <span>Analizador</span>
+                            <small>Apoyo Visual</small>
+                        </div>
+                        <button class="btn-launch"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <div class="favorite-item">
+                        <div class="fav-icon purple"><i class="fa-solid fa-table-cells"></i></div>
+                        <div class="fav-info">
+                            <span>Crucigrama</span>
+                            <small>Juegos</small>
+                        </div>
+                        <button class="btn-launch"><i class="fa-solid fa-arrow-right"></i></button>
+                    </div>
+                    <div class="add-favorite">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Añadir acceso directo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section promo-section">
+                <div class="promo-card">
+                    <div class="promo-icon"><i class="fa-solid fa-crown"></i></div>
+                    <h4>Obten Premium</h4>
+                    <p>Desbloquea todas las herramientas IA sin lÃ­mites.</p>
+                    <button class="btn-upgrade">Mejorar Plan</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+    <script src="script.js"></script>
+    <script>
+        // Init Lucide Icons
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    </script>
+    <!-- School Setup Modal (Hidden initially) -->
+    <!-- School Setup Modal (Enhanced & Responsive) -->
+    <div id="school-modal"
+        class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-md opacity-0 transition-all duration-300">
+
+        <!-- Modal Container -->
+        <div
+            class="bg-white/95 rounded-[2rem] shadow-2xl max-w-md w-full p-8 border border-white/60 relative transform scale-95 transition-all duration-300 mx-4 overflow-hidden group shadow-indigo-500/20 ring-1 ring-white/50">
+
+            <!-- Elegant Background Blobs -->
+            <div
+                class="absolute -top-20 -right-20 w-40 h-40 bg-indigo-500/10 rounded-full blur-2xl group-hover:bg-indigo-500/20 transition-all duration-700">
+            </div>
+            <div
+                class="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl group-hover:bg-purple-500/20 transition-all duration-700">
+            </div>
+
+            <!-- Header -->
+            <div class="relative flex items-center justify-between mb-8 z-10">
+                <div class="flex items-center gap-4">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-gradient-to-br from-green-50 to-emerald-100/50 flex items-center justify-center shadow-md border border-emerald-100 overflow-hidden">
+                        <img src="/static/images/1.png" alt="Logo" class="w-full h-full object-cover opacity-80">
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-xl tracking-tight">Datos Escolares</h3>
+                        <p class="text-xs font-semibold text-indigo-500 uppercase tracking-widest">Configuración Inicial
+                        </p>
+                    </div>
+                </div>
+                <button type="button"
+                    class="text-gray-500 hover:text-white hover:bg-gradient-to-br hover:from-red-500 hover:to-orange-500 p-2.5 rounded-xl transition-all duration-300 modal-close bg-white shadow-lg border border-gray-200 hover:border-transparent hover:scale-110 hover:rotate-90 group">
+                    <i data-lucide="x" class="w-5 h-5 transition-transform duration-300"></i>
+                </button>
+            </div>
+
+            <form id="school-form" class="space-y-6 relative z-10">
+                <div class="space-y-5">
+                    <!-- DRE & UGEL Group -->
+                    <div class="space-y-4">
+                        <div class="relative group/input">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1 group-focus-within/input:text-indigo-600 transition-colors">DRE
+                                (Dirección Regional)</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-indigo-500 transition-colors"><i
+                                        data-lucide="map" class="w-4 h-4"></i></span>
+                                <input type="text" name="dre"
+                                    class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all outline-none font-medium text-slate-700 placeholder-slate-400"
+                                    placeholder="Ej: San Martín" required>
+                            </div>
+                        </div>
+
+                        <div class="relative group/input">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1 group-focus-within/input:text-indigo-600 transition-colors">UGEL</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-indigo-500 transition-colors"><i
+                                        data-lucide="landmark" class="w-4 h-4"></i></span>
+                                <input type="text" name="ugel"
+                                    class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all outline-none font-medium text-slate-700 placeholder-slate-400"
+                                    placeholder="Ej: San Martín" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- IE & Distrito Grid -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative group/input">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1 group-focus-within/input:text-indigo-600 transition-colors">N°
+                                Institución</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-indigo-500 transition-colors"><i
+                                        data-lucide="school" class="w-4 h-4"></i></span>
+                                <input type="text" name="ie" value="0018"
+                                    class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all outline-none font-medium text-slate-700"
+                                    placeholder="N°" required>
+                            </div>
+                        </div>
+                        <div class="relative group/input">
+                            <label
+                                class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5 ml-1 group-focus-within/input:text-indigo-600 transition-colors">Distrito</label>
+                            <div class="relative">
+                                <span
+                                    class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within/input:text-indigo-500 transition-colors"><i
+                                        data-lucide="map-pin" class="w-4 h-4"></i></span>
+                                <input type="text" name="distrito" value="Tarapoto"
+                                    class="w-full pl-11 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition-all outline-none font-medium text-slate-700"
+                                    placeholder="Distrito" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit"
+                        class="group/btn relative w-full py-4 bg-slate-900 text-white rounded-xl font-bold hover:bg-indigo-600 shadow-xl shadow-slate-200 hover:shadow-indigo-200 transition-all duration-300 transform active:scale-[0.98] overflow-hidden flex items-center justify-center gap-2">
+                        <div
+                            class="absolute inset-0 bg-white/10 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300">
+                        </div>
+                        <span class="relative">Guardar y Continuar</span>
+                        <i data-lucide="arrow-right"
+                            class="relative w-5 h-5 group-hover/btn:translate-x-1 transition-transform"></i>
+                    </button>
+                    <p class="text-center text-[10px] text-slate-400 mt-3 font-medium">Información necesaria para
+                        generar tus documentos pedagógicos</p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Dialog -->
+    <div id="confirm-dialog"
+        class="fixed inset-0 z-[200] hidden flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm opacity-0 transition-all duration-300">
+        <div
+            class="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-6 transform scale-90 transition-all duration-300 relative overflow-hidden">
+            <!-- Decorative top bar -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-red-500 to-orange-500"></div>
+
+            <!-- Icon -->
+            <div class="flex justify-center mb-4 mt-2">
+                <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center">
+                    <i data-lucide="alert-triangle" class="w-8 h-8 text-red-500"></i>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <h3 class="text-lg font-bold text-gray-800 text-center mb-2">¿Estás seguro?</h3>
+            <p class="text-sm text-gray-600 text-center mb-6">Los datos que ingresaste no se guardarán si cierras ahora.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex gap-3">
+                <button id="confirm-cancel"
+                    class="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all">
+                    Cancelar
+                </button>
+                <button id="confirm-accept"
+                    class="flex-1 py-3 px-4 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-all transform active:scale-95">
+                    Salir
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
